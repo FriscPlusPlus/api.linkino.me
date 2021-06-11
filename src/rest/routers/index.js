@@ -1,7 +1,7 @@
 const express = require('express');
 const rateLimit = require('express-rate-limit');
 const slowDown = require('express-slow-down');
-
+const getIp = require('request-ip');
 const router = express.Router();
 const controllers = require('../controllers');
 
@@ -39,6 +39,14 @@ const sendClipRateLimiter = rateLimit({
   windowMs: 86400000,
   max: 5,
   message: 'You passed the limit, you can send a max of 5 clips for day!'
+});
+
+// test
+
+router.get('/test/ip', (req, res) => {
+  res.json({
+    ip: getIp.getClientIp(req)
+  });
 });
 
 router.get('/app/listMyUrl', controllers.links.getLinkByIp);
