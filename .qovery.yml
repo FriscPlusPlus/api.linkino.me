@@ -1,0 +1,11 @@
+---
+application:
+  name: "linkino-api"
+  project: "friscas"
+  organization: "QoveryCommunity"
+routers:
+- name: "main-linkino-api"
+  routes:
+  - application_name: "linkino-api"
+    paths:
+    - "/*"
