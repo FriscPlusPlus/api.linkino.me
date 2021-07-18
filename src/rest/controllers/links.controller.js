@@ -11,7 +11,7 @@ const getLinkByIp = function (req, res) {
   urls.find({ ip }, { fields: { _id: 0, ip: 0 } }).then((doc) => {
     if (doc === null || doc.length === 0) {
       return res.status(404).json({
-        message: 'No link was found!'
+        message: 'No link was found!',
       });
     }
     return res.json(doc);
@@ -25,11 +25,11 @@ const getLink = function (req, res, next) {
     urls.findOne({ slug }).then((doc) => {
       if (doc === null) {
         return res.status(404).json({
-          message: 'Link not found'
+          message: 'Link not found',
         });
       }
       return res.json({
-        link: doc.link
+        link: doc.link,
       });
     });
   } catch (e) {
@@ -49,25 +49,36 @@ const createLink = function (req, res, next) {
   }
   if (sSlug.length > 5) {
     return res.status(429).json({
-      message: 'The slug is too long! Max length is 5'
+      message: 'The slug is too long! Max length is 5',
     });
   }
   // eslint-disable-next-line prefer-const
   oData = { link: sLink, slug: sSlug, ip: requestIp.getClientIp(req) };
   try {
-    urls.insert(oData).then(() => res.json({
-      slug: oData.slug
-    })).catch(() => res.status(500).json({
-      status: '500',
-      message: 'Duplicate slug detected!'
-    }));
+    urls
+      .insert(oData)
+      .then(() => res.json({
+        slug: oData.slug,
+      }))
+      .catch(() => res.status(500).json({
+        status: '500',
+        message: 'Duplicate slug detected!',
+      }));
   } catch (e) {
     next(e);
   }
 };
 
+const deleteLinkBySlug = function (req, res) {
+  const slugID = req.slug;
+  urls.remove({ slug: slugID })
+    .then(() => res.status(200).json({ message: 'Done!' }))
+    .catch(() => res.status(500).json({ message: 'Something went wrong!' }));
+};
+
 module.exports = {
   getLink,
   getLinkByIp,
-  createLink
+  deleteLinkBySlug,
+  createLink,
 };

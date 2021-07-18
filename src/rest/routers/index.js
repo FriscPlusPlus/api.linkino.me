@@ -2,6 +2,7 @@ const express = require('express');
 const rateLimit = require('express-rate-limit');
 const slowDown = require('express-slow-down');
 const getIp = require('request-ip');
+
 const router = express.Router();
 const controllers = require('../controllers');
 
@@ -51,6 +52,7 @@ router.get('/test/ip', (req, res) => {
 
 router.get('/app/listMyUrl', controllers.links.getLinkByIp);
 router.get('/:slug', controllers.links.getLink);
+router.get('/app/:slug', controllers.links.deleteLinkBySlug);
 router.post('/app', createLinkSpeedLimiter, createLinkRateLimiter, controllers.links.createLink);
 
 // route for contacts
