@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 const { nanoid } = require('nanoid');
 const requestIp = require('request-ip');
 
@@ -70,10 +71,15 @@ const createLink = function (req, res, next) {
 };
 
 const deleteLinkBySlug = function (req, res) {
-  const slugID = req.slug;
-  urls.remove({ slug: slugID })
-    .then(() => res.status(200).json({ message: 'Done!' }))
-    .catch(() => res.status(500).json({ message: 'Something went wrong!' }));
+  const slugID = req.params.slug;
+  const userIP = requestIp.getClientIp(req);
+  urls.find({ slug: slugID }).then((data) => {
+    if (userIP === data[0].ip) {
+      urls.remove({ slug: slugID })
+        .then(() => res.status(200).json({ message: 'Done!' }))
+        .catch(() => res.status(500).json({ message: 'Something went wrong!' })); 
+    }
+  });
 };
 
 module.exports = {
