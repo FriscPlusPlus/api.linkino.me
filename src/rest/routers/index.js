@@ -63,6 +63,7 @@ router.post('/app/contactUs', contactSpeedLimiter, contactRateLimiter, controlle
 // route for bg clips
 
 router.get('/app/getClips', controllers.clips.getClip);
+router.get('/app/removeOldClips', controllers.clips.removeUnusedClips);
 
 // route to all
 
