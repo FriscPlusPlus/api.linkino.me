@@ -66,14 +66,6 @@ router.post('/app/contactUs', contactSpeedLimiter, contactRateLimiter, controlle
 router.get('/app/getClips', controllers.clips.getClip);
 router.get('/app/removeOldClips', controllers.clips.removeUnusedClips);
 
-// route for auth
-
-router.get('/auth/isLogged', requiresAuth(), (req, res) => {
-  res.json({
-    user: req.oidc.user
-  });
-});
-
 // route to all
 
 router.get('/', (req, res) => res.status(418).sendFile(`${__dirname}/teapot/index.html`));
