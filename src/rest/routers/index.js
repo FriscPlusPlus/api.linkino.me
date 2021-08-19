@@ -3,8 +3,9 @@ const rateLimit = require('express-rate-limit');
 const slowDown = require('express-slow-down');
 const getIp = require('request-ip');
 
+const { isLoggedIn } = require('../middleware/auth');
+
 const router = express.Router();
-const { requiresAuth } = require('express-openid-connect');
 const controllers = require('../controllers');
 
 const createLinkSpeedLimiter = slowDown({
@@ -65,6 +66,15 @@ router.post('/app/contactUs', contactSpeedLimiter, contactRateLimiter, controlle
 
 router.get('/app/getClips', controllers.clips.getClip);
 router.get('/app/removeOldClips', controllers.clips.removeUnusedClips);
+
+// router for auth
+
+router.post('/auth/login', controllers.auth.login);
+router.get('/auth/isLogged', isLoggedIn, (req, res) => {
+  res.status(200).json({
+    isLoggedIn: true
+  });
+});
 
 // route to all
 
