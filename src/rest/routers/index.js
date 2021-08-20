@@ -70,9 +70,9 @@ router.get('/app/removeOldClips', controllers.clips.removeUnusedClips);
 // router for auth
 
 router.post('/auth/login', controllers.auth.login);
-router.get('/auth/isLogged', isLoggedIn, isExpired, (req, res) => {
+router.get('/auth/isExpired', isLoggedIn, isExpired, (req, res) => {
   res.status(200).json({
-    isLoggedIn: true
+    isExpired: false
   });
 });
 
