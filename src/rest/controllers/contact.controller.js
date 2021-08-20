@@ -1,3 +1,4 @@
+/* eslint-disable func-names */
 // eslint-disable-next-line no-unused-vars
 const mail = require('nodemailer');
 const { clips, key } = require('../db/index');

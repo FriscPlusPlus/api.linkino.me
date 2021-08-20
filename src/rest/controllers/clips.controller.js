@@ -1,6 +1,7 @@
 /* eslint-disable func-names */
-const requestIp = require("request-ip");
-const { clips } = require("../db");
+const requestIp = require('request-ip');
+const monk = require('monk');
+const { clips } = require('../db');
 
 const getClip = async function (req, res) {
   const aClips = await clips.find({
@@ -39,14 +40,58 @@ const removeUnusedClips = function (req, res) {
   clips
     .remove({ view_counts: 0 }, { multi: true })
     .then(() => res.status(200).json({
-      no: 'problem'
+      no: 'problem',
     }))
     .catch(() => res.status(200).json({
-      yes: 'problem'
+      yes: 'problem',
     }));
+};
+
+const getAllClips = async function (req, res) {
+  try {
+    const aClips = await clips.find();
+    const aData = [];
+    aClips.forEach((clip) => {
+      aData.push({
+        id: clip._id.toHexString(),
+        email: clip.c_email,
+        clipLink: clip.c_clip,
+        name: clip.name,
+        userLink: clip.link,
+      });
+    });
+    res.status(200).json({
+      clips: aData,
+    });
+  } catch (error) {
+    res.status(500).json({
+      error,
+    });
+  }
+};
+
+const approveClip = async function (req, res) {
+  const { id } = req.params;
+  const objectID = monk.id(id);
+  try {
+    await clips.update({ _id: objectID }, {
+      $set: {
+        approved: true,
+      }
+    });
+    res.status(201).json({
+      "message": "Done!"
+    });
+  } catch (error) {
+    res.status(500).json({
+      error
+    });
+  }
 };
 
 module.exports = {
   removeUnusedClips,
   getClip,
+  getAllClips,
+  approveClip,
 };

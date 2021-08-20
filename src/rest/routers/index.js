@@ -66,6 +66,8 @@ router.post('/app/contactUs', contactSpeedLimiter, contactRateLimiter, controlle
 
 router.get('/app/getClips', controllers.clips.getClip);
 router.get('/app/removeOldClips', controllers.clips.removeUnusedClips);
+router.get('/app/getAllClips', isLoggedIn, isExpired, controllers.clips.getAllClips);
+router.post('/app/approveClip/:id', isLoggedIn, isExpired, controllers.clips.approveClip);
 
 // router for auth
 
