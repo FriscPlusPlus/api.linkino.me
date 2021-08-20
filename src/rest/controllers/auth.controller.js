@@ -12,6 +12,7 @@ const login = async function (req, res) {
     });
   }
   const password = crypto
+    .createHash('md5')
     .update(req.body.password)
     .digest('hex');
   try {
