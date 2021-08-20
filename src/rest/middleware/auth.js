@@ -8,7 +8,7 @@ const createToken = function (user, isAdmin) {
   const userPayload = {};
   userPayload.user = user;
   userPayload.isAdmin = isAdmin;
-  userPayload.expire = new Date() + 3 * 24 * 60 * 60 * 1000;
+  userPayload.expire = new Date().getTime() + 3 * 24 * 60 * 60 * 1000;
   const token = jwt.encrypt(JSON.stringify(userPayload));
   return token;
 };
