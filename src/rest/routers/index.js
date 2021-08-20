@@ -3,7 +3,7 @@ const rateLimit = require('express-rate-limit');
 const slowDown = require('express-slow-down');
 const getIp = require('request-ip');
 
-const { isLoggedIn } = require('../middleware/auth');
+const { isLoggedIn, isExpired } = require('../middleware/auth');
 
 const router = express.Router();
 const controllers = require('../controllers');
@@ -70,7 +70,7 @@ router.get('/app/removeOldClips', controllers.clips.removeUnusedClips);
 // router for auth
 
 router.post('/auth/login', controllers.auth.login);
-router.get('/auth/isLogged', isLoggedIn, (req, res) => {
+router.get('/auth/isLogged', isLoggedIn, isExpired, (req, res) => {
   res.status(200).json({
     isLoggedIn: true
   });

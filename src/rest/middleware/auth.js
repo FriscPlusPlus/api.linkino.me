@@ -1,3 +1,4 @@
+/* eslint-disable consistent-return */
 /* eslint-disable func-names */
 const Encrypt = require('./encrypt');
 
@@ -13,8 +14,8 @@ const createToken = function (user, isAdmin) {
 };
 
 const isLoggedIn = function (req, res, next) {
-  const token = req.headers.jelassitoken;
-  const payload = jwt.decrypt(token);
+  const { jelassitoken } = req.headers;
+  const payload = jwt.decrypt(jelassitoken);
   try {
     const userData = JSON.parse(payload);
     if (userData.user) {
@@ -27,7 +28,22 @@ const isLoggedIn = function (req, res, next) {
   }
 };
 
+const isExpired = function (req, res, next) {
+  const { jelassitoken } = req.headers;
+  const payload = jwt.decrypt(jelassitoken);
+  const oPayload = JSON.parse(payload);
+  const currentDate = new Date().getTime();
+  const tokenDate = new Date(oPayload.expire).getTime();
+  if ((tokenDate - currentDate) < 0) {
+    return res.status(401).json({
+      message: 'Token expired!'
+    });
+  }
+  next();
+};
+
 module.exports = {
   createToken,
-  isLoggedIn
+  isLoggedIn,
+  isExpired
 };
