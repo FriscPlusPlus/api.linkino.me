@@ -58,6 +58,9 @@ const getAllClips = async function (req, res) {
         clipLink: clip.c_clip,
         name: clip.name,
         userLink: clip.link,
+        isApproved: clip.approved,
+        totalCounts: clip.total_counts,
+        viewCounts: clip.view_counts
       });
     });
     res.status(200).json({
