@@ -68,6 +68,9 @@ router.get('/app/getClips', controllers.clips.getClip);
 router.get('/app/removeOldClips', controllers.clips.removeUnusedClips);
 router.get('/app/getAllClips', isLoggedIn, isExpired, controllers.clips.getAllClips);
 router.post('/app/approveClip/:id', isLoggedIn, isExpired, controllers.clips.approveClip);
+router.post('/app/declineClip/:id', isLoggedIn, isExpired, controllers.clips.declineClip);
+router.post('/app/deleteClip/:id', isLoggedIn, isExpired, controllers.clips.deleteClip);
+router.post('/app/editClip/:id', isLoggedIn, isExpired, controllers.clips.editClip);
 
 // router for auth
 
