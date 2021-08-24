@@ -58,8 +58,8 @@ const contact_us = function (req, res) {
   const { email, reason, message } = req.body;
 
   const mailOptions = {
-    from: '"Friscas" <support@friscas.me>',
-    to: 'support@friscas.me',
+    from: '"Linkino" <service@linkino.me>',
+    to: 'service@linkino.me',
     subject: `Reason: ${reason} from ${email}`,
     html: `<b>${message}</b><br><br><a href=mailto:${email}>Contact</a>`
   };
