@@ -68,7 +68,6 @@ const sendClip = function (req, res) {
 };
 
 const contact_us = function (req, res) {
-  const transporter = mail.createTransport(process.env.SMTP);
   const { email, reason, message } = req.body;
   sendEmail(
     'service@linkino.me',

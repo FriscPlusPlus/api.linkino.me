@@ -1,5 +1,5 @@
 /* eslint-disable func-names */
-const mail = require("nodemailer");
+const mail = require('nodemailer');
 
 const transporter = mail.createTransport(process.env.SMTP);
 
@@ -11,7 +11,7 @@ const sendEmail = function (emailTo, subject, html, callback) {
     html,
   };
   // send mail with defined transport object
-  transporter.sendMail(mailOptions, callback());
+  transporter.sendMail(mailOptions, callback);
 };
 module.exports = {
   sendEmail,

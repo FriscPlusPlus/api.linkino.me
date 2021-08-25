@@ -75,7 +75,7 @@ const getAllClips = async function (req, res) {
 };
 
 const approveClip = async function (req, res) {
-  const { id, email } = req.params;
+  const { id } = req.params;
   const objectID = monk.id(id);
   try {
     await clips.update(
@@ -86,14 +86,21 @@ const approveClip = async function (req, res) {
         },
       }
     );
-    sendEmail(
-      email,
-      'Your clip!',
-      '<span>Dear Linkino User, your clip has been: </span><h1>APPROVED!</h1><br>Sincerely,<br>your Linkino team!'
-    );
-    res.status(201).json({
-      message: 'Done!',
-    });
+    try {
+      const { c_email } = await clips.findOne({ _id: objectID });
+      sendEmail(
+        c_email,
+        'Your clip!',
+        '<span>Dear Linkino User,<br>your clip has been: </span><h1>APPROVED!</h1><br>Sincerely,<br>your Linkino team!'
+      );
+      res.status(201).json({
+        message: 'Done!',
+      });
+    } catch (error) {
+      res.status(400).json({
+        error,
+      });
+    }
   } catch (error) {
     res.status(500).json({
       error,
@@ -102,24 +109,50 @@ const approveClip = async function (req, res) {
 };
 
 const declineClip = async function (req, res) {
-  const { email } = req.params;
+  const { id } = req.params;
+  const objectID = monk.id(id);
   try {
-    sendEmail(
-      email,
-      'Your clip!',
-      '<span>Dear Linkino User, your clip has been: </span><h1>DECLINED!</h1><br>Sincerely,<br>your Linkino team!'
+    await clips.update(
+      { _id: objectID },
+      {
+        $set: {
+          approved: false,
+        },
+      }
     );
-    res.status(201).json({
-      message: 'Done!',
-    });
+    try {
+      const { c_email } = await clips.findOne({ _id: objectID });
+      sendEmail(
+        c_email,
+        'Your clip!',
+        '<span>Dear Linkino User,<br>your clip has been: </span><h1>DECLINED!</h1><br>Sincerely,<br>your Linkino team!'
+      );
+      res.status(201).json({
+        message: 'Done!',
+      });
+    } catch (error) {
+      res.status(400).json({
+        error,
+      });
+    }
   } catch (error) {
     res.status(500).json({
       error,
     });
   }
 };
-const deleteClip = async function (req, res) {};
-const editClip = async function (req, res) {};
+const deleteClip = async function (req, res) {
+  const { id } = req.params;
+  const objectID = monk.id(id);
+  clips
+    .remove({ _id: objectID }, { multi: false })
+    .then((done) => res.status(200).json({
+      done,
+    }))
+    .catch((error) => res.status(200).json({
+      error,
+    }));
+};
 
 module.exports = {
   removeUnusedClips,
@@ -128,5 +161,4 @@ module.exports = {
   approveClip,
   declineClip,
   deleteClip,
-  editClip,
 };
