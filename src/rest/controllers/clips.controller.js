@@ -2,6 +2,7 @@
 const requestIp = require('request-ip');
 const monk = require('monk');
 const { clips } = require('../db');
+const { sendEmail } = require('../middleware/email');
 
 const getClip = async function (req, res) {
   const aClips = await clips.find({
@@ -60,7 +61,7 @@ const getAllClips = async function (req, res) {
         userLink: clip.link,
         isApproved: clip.approved,
         totalCounts: clip.total_counts,
-        viewCounts: clip.view_counts
+        viewCounts: clip.view_counts,
       });
     });
     res.status(200).json({
@@ -74,27 +75,58 @@ const getAllClips = async function (req, res) {
 };
 
 const approveClip = async function (req, res) {
-  const { id } = req.params;
+  const { id, email } = req.params;
   const objectID = monk.id(id);
   try {
-    await clips.update({ _id: objectID }, {
-      $set: {
-        approved: true,
+    await clips.update(
+      { _id: objectID },
+      {
+        $set: {
+          approved: true,
+        },
       }
-    });
+    );
+    sendEmail(
+      email,
+      'Your clip!',
+      '<span>Dear Linkino User, your clip has been: </span><h1>APPROVED!</h1><br>Sincerely,<br>your Linkino team!'
+    );
     res.status(201).json({
-      "message": "Done!"
+      message: 'Done!',
     });
   } catch (error) {
     res.status(500).json({
-      error
+      error,
     });
   }
 };
+
+const declineClip = async function (req, res) {
+  const { email } = req.params;
+  try {
+    sendEmail(
+      email,
+      'Your clip!',
+      '<span>Dear Linkino User, your clip has been: </span><h1>DECLINED!</h1><br>Sincerely,<br>your Linkino team!'
+    );
+    res.status(201).json({
+      message: 'Done!',
+    });
+  } catch (error) {
+    res.status(500).json({
+      error,
+    });
+  }
+};
+const deleteClip = async function (req, res) {};
+const editClip = async function (req, res) {};
 
 module.exports = {
   removeUnusedClips,
   getClip,
   getAllClips,
   approveClip,
+  declineClip,
+  deleteClip,
+  editClip,
 };

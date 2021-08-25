@@ -1,9 +1,17 @@
 /* eslint-disable func-names */
 // eslint-disable-next-line no-unused-vars
-const mail = require('nodemailer');
+const { sendEmail } = require('../middleware/email');
 const { clips, key } = require('../db/index');
 
-const _createData = function (nickname, email, clip, save_auto, res, link, viewCount) {
+const _createData = function (
+  nickname,
+  email,
+  clip,
+  save_auto,
+  res,
+  link,
+  viewCount
+) {
   const data = {
     name: nickname,
     c_email: email,
@@ -12,17 +20,18 @@ const _createData = function (nickname, email, clip, save_auto, res, link, viewC
     link,
     view_counts: viewCount,
     ips: [],
-    total_counts: 0
+    total_counts: 0,
   };
 
-  clips.insert(data)
+  clips
+    .insert(data)
     .then(() => res.status(200).json({
       status: 200,
-      message: 'done!'
+      message: 'done!',
     }))
     .catch(() => res.status(500).json({
       status: 500,
-      message: 'Something wrong happened'
+      message: 'Something wrong happened',
     }));
 };
 
@@ -31,7 +40,12 @@ const sendClip = function (req, res) {
   let save_auto;
   const {
     // eslint-disable-next-line no-unused-vars
-    nickname, email, clip, myKey, auto, link
+    nickname,
+    email,
+    clip,
+    myKey,
+    auto,
+    link,
   } = req.body;
   // eslint-disable-next-line no-empty
   /* if (myKey) {
@@ -56,30 +70,26 @@ const sendClip = function (req, res) {
 const contact_us = function (req, res) {
   const transporter = mail.createTransport(process.env.SMTP);
   const { email, reason, message } = req.body;
-
-  const mailOptions = {
-    from: '"Linkino" <service@linkino.me>',
-    to: 'service@linkino.me',
-    subject: `Reason: ${reason} from ${email}`,
-    html: `<b>${message}</b><br><br><a href=mailto:${email}>Contact</a>`
-  };
-
-  // send mail with defined transport object
-  transporter.sendMail(mailOptions, (error, info) => {
-    if (error) {
-      return res.status(500).json({
-        code: 500,
-        message: 'An error occurred'
+  sendEmail(
+    'service@linkino.me',
+    `Reason: ${reason} from ${email}`,
+    `<b>${message}</b><br><br><a href=mailto:${email}>Contact</a>`,
+    (error, info) => {
+      if (error) {
+        return res.status(500).json({
+          code: 500,
+          message: 'An error occurred',
+        });
+      }
+      return res.json({
+        code: 200,
+        message: 'Send!',
       });
     }
-    return res.json({
-      code: 200,
-      message: 'Send!'
-    });
-  });
+  );
 };
 
 module.exports = {
   sendClip,
-  contact_us
+  contact_us,
 };
