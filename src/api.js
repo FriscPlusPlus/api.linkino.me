@@ -10,6 +10,7 @@ const api = require('./rest');
 
 const app = express();
 app.use(cors());
+app.options('*', cors());
 
 app.enable('trust proxy', 1);
 
